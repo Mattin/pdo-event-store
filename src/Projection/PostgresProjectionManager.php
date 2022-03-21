@@ -137,7 +137,7 @@ EOT;
             $status = ProjectionStatus::DELETING()->getValue();
         }
 
-        $statement = $this->connection->prepare($sql);
+        $statement = $this->connection->getNativeConnection()->prepare($sql);
         try {
             $statement->execute([
                 $status,
@@ -162,7 +162,7 @@ EOT;
 UPDATE {$this->quoteIdent($this->projectionsTable)} SET status = ? WHERE name = ?;
 EOT;
 
-        $statement = $this->connection->prepare($sql);
+        $statement = $this->connection->getNativeConnection()->prepare($sql);
         try {
             $statement->execute([
                 ProjectionStatus::RESETTING()->getValue(),
@@ -187,7 +187,7 @@ EOT;
 UPDATE {$this->quoteIdent($this->projectionsTable)} SET status = ? WHERE name = ?;
 EOT;
 
-        $statement = $this->connection->prepare($sql);
+        $statement = $this->connection->getNativeConnection()->prepare($sql);
         try {
             $statement->execute([
                 ProjectionStatus::STOPPING()->getValue(),
@@ -236,7 +236,7 @@ ORDER BY name ASC
 LIMIT $limit OFFSET $offset
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute($values);
@@ -288,7 +288,7 @@ ORDER BY name ASC
 LIMIT $limit OFFSET $offset
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute($values);
@@ -355,7 +355,7 @@ WHERE name = ?
 LIMIT 1
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute([$name]);
@@ -384,7 +384,7 @@ WHERE name = ?
 LIMIT 1
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute([$name]);
