@@ -124,7 +124,7 @@ SELECT metadata FROM {$this->quoteIdent($this->eventStreamsTable)}
 WHERE real_stream_name = :streamName; 
 EOT;
 
-        $statement = $this->connection->prepare($sql);
+        $statement = $this->connection->getNativeConnection()->prepare($sql);
         try {
             $statement->execute(['streamName' => $streamName->toString()]);
         } catch (PDOException $exception) {
@@ -152,7 +152,7 @@ SET metadata = :metadata
 WHERE real_stream_name = :streamName; 
 EOT;
 
-        $statement = $this->connection->prepare($sql);
+        $statement = $this->connection->getNativeConnection()->prepare($sql);
         try {
             $statement->execute([
                 'streamName' => $streamName->toString(),
@@ -178,7 +178,7 @@ SELECT COUNT(1) FROM {$this->quoteIdent($this->eventStreamsTable)}
 WHERE real_stream_name = :streamName;
 EOT;
 
-        $statement = $this->connection->prepare($sql);
+        $statement = $this->connection->getNativeConnection()->prepare($sql);
 
         try {
             $statement->execute(['streamName' => $streamName->toString()]);
@@ -235,7 +235,7 @@ EOT;
 
         $sql = 'INSERT INTO ' . $this->quoteIdent($tableName) . ' (' . \implode(', ', $columnNames) . ') VALUES ' . $allPlaces;
 
-        $statement = $this->connection->prepare($sql);
+        $statement = $this->connection->getNativeConnection()->prepare($sql);
 
         try {
             $statement->execute($data);
@@ -267,7 +267,7 @@ EOT;
         $tableName = $this->persistenceStrategy->generateTableName($streamName);
 
         $selectQuery = "SELECT stream_name FROM {$this->quoteIdent($this->eventStreamsTable)} WHERE stream_name = ?";
-        $selectStatement = $this->connection->prepare($selectQuery);
+        $selectStatement = $this->connection->getNativeConnection()->prepare($selectQuery);
         $selectStatement->execute([$tableName]);
 
         if ($selectStatement->rowCount() === 0) {
@@ -295,13 +295,13 @@ EOT;
 SELECT COUNT(*) FROM {$this->quoteIdent($tableName)}
 $whereCondition
 EOT;
-        $selectStatement = $this->connection->prepare($selectQuery);
+        $selectStatement = $this->connection->getNativeConnection()->prepare($selectQuery);
         $selectStatement->setFetchMode(PDO::FETCH_OBJ);
 
         $selectStatement->bindValue(':fromNumber', $fromNumber, PDO::PARAM_INT);
         $selectStatement->bindValue(':limit', $limit, PDO::PARAM_INT);
 
-        $countStatement = $this->connection->prepare($countQuery);
+        $countStatement = $this->connection->getNativeConnection()->prepare($countQuery);
         $countStatement->setFetchMode(PDO::FETCH_OBJ);
 
         $countStatement->bindValue(':fromNumber', $fromNumber, PDO::PARAM_INT);
@@ -370,13 +370,13 @@ SELECT COUNT(*) FROM {$this->quoteIdent($tableName)}
 $whereCondition
 EOT;
 
-        $selectStatement = $this->connection->prepare($selectQuery);
+        $selectStatement = $this->connection->getNativeConnection()->prepare($selectQuery);
         $selectStatement->setFetchMode(PDO::FETCH_OBJ);
 
         $selectStatement->bindValue(':fromNumber', $fromNumber, PDO::PARAM_INT);
         $selectStatement->bindValue(':limit', $limit, PDO::PARAM_INT);
 
-        $countStatement = $this->connection->prepare($countQuery);
+        $countStatement = $this->connection->getNativeConnection()->prepare($countQuery);
         $countStatement->setFetchMode(PDO::FETCH_OBJ);
 
         $countStatement->bindValue(':fromNumber', $fromNumber, PDO::PARAM_INT);
@@ -423,7 +423,7 @@ EOT;
 DROP TABLE IF EXISTS {$this->quoteIdent($encodedStreamName)};
 EOT;
 
-        $statement = $this->connection->prepare($deleteEventStreamSql);
+        $statement = $this->connection->getNativeConnection()->prepare($deleteEventStreamSql);
         try {
             $statement->execute();
         } catch (PDOException $exception) {
@@ -520,7 +520,7 @@ ORDER BY real_stream_name ASC
 LIMIT $limit OFFSET $offset
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute($values);
@@ -568,7 +568,7 @@ ORDER BY real_stream_name ASC
 LIMIT $limit OFFSET $offset
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute($values);
@@ -617,7 +617,7 @@ ORDER BY category ASC
 LIMIT $limit OFFSET $offset
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute($values);
@@ -659,7 +659,7 @@ ORDER BY category ASC
 LIMIT $limit OFFSET $offset
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute($values);
@@ -786,7 +786,7 @@ INSERT INTO {$this->quoteIdent($this->eventStreamsTable)} (real_stream_name, str
 VALUES (:realStreamName, :streamName, :metadata, :category);
 EOT;
 
-        $statement = $this->connection->prepare($sql);
+        $statement = $this->connection->getNativeConnection()->prepare($sql);
         try {
             $result = $statement->execute([
                 ':realStreamName' => $realStreamName,
@@ -818,7 +818,7 @@ EOT;
 DELETE FROM {$this->quoteIdent($this->eventStreamsTable)} WHERE real_stream_name = ?;
 EOT;
 
-        $statement = $this->connection->prepare($deleteEventStreamTableEntrySql);
+        $statement = $this->connection->getNativeConnection()->prepare($deleteEventStreamTableEntrySql);
         try {
             $statement->execute([$streamName->toString()]);
         } catch (PDOException $exception) {
@@ -839,7 +839,7 @@ EOT;
         $schema = $this->persistenceStrategy->createSchema($tableName);
 
         foreach ($schema as $command) {
-            $statement = $this->connection->prepare($command);
+            $statement = $this->connection->getNativeConnection()->prepare($command);
             try {
                 $result = $statement->execute();
             } catch (PDOException $exception) {
