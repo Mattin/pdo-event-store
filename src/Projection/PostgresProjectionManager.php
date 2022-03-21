@@ -326,7 +326,7 @@ WHERE name = ?
 LIMIT 1
 SQL;
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->connection->getNativeConnection()->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute([$name]);
