@@ -18,6 +18,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use PDO;
 use PDOException;
+use Doctrine\DBAL\Driver\PDO\Connection;
 use Prooph\Common\Messaging\Message;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\EventStoreDecorator;
@@ -48,7 +49,7 @@ final class PdoEventStoreReadModelProjector implements ReadModelProjector
     private $eventStore;
 
     /**
-     * @var PDO
+     * @var Connection
      */
     private $connection;
 
@@ -169,7 +170,7 @@ final class PdoEventStoreReadModelProjector implements ReadModelProjector
 
     public function __construct(
         EventStore $eventStore,
-        PDO $connection,
+        Connection $connection,
         string $name,
         ReadModel $readModel,
         string $eventStreamsTable,
