@@ -199,7 +199,7 @@ final class PdoEventStoreReadModelProjector implements ReadModelProjector
         $this->triggerPcntlSignalDispatch = $triggerPcntlSignalDispatch;
         $this->updateLockThreshold = $updateLockThreshold;
         $this->gapDetection = $gapDetection;
-        $this->vendor = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $this->vendor = $this->connection->getNativeConnection()->getAttribute(PDO::ATTR_DRIVER_NAME);
         while ($eventStore instanceof EventStoreDecorator) {
             $eventStore = $eventStore->getInnerEventStore();
         }
