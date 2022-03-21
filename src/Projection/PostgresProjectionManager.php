@@ -15,6 +15,7 @@ namespace Prooph\EventStore\Pdo\Projection;
 
 use PDO;
 use PDOException;
+use Doctrine\DBAL\Driver\PDO\Connection;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\EventStoreDecorator;
 use Prooph\EventStore\Exception\OutOfRangeException;
@@ -39,7 +40,7 @@ final class PostgresProjectionManager implements ProjectionManager
     private $eventStore;
 
     /**
-     * @var PDO
+     * @var Connection
      */
     private $connection;
 
@@ -55,7 +56,7 @@ final class PostgresProjectionManager implements ProjectionManager
 
     public function __construct(
         EventStore $eventStore,
-        PDO $connection,
+        Connection $connection,
         string $eventStreamsTable = 'event_streams',
         string $projectionsTable = 'projections'
     ) {
