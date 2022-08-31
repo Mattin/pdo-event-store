@@ -82,7 +82,7 @@ final class PostgresEventStore implements PdoEventStore, TransactionalEventStore
      */
     public function __construct(
         MessageFactory $messageFactory,
-        Connection $connection,
+        PDO $connection,
         PersistenceStrategy $persistenceStrategy,
         int $loadBatchSize = 10000,
         string $eventStreamsTable = 'event_streams',
