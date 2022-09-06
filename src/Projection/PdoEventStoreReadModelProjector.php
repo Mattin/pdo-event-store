@@ -49,7 +49,7 @@ final class PdoEventStoreReadModelProjector implements ReadModelProjector
     private $eventStore;
 
     /**
-     * @var Connection
+     * @var PDO
      */
     private $connection;
 
@@ -170,7 +170,7 @@ final class PdoEventStoreReadModelProjector implements ReadModelProjector
 
     public function __construct(
         EventStore $eventStore,
-        Connection $connection,
+        PDO $connection,
         string $name,
         ReadModel $readModel,
         string $eventStreamsTable,
@@ -199,7 +199,7 @@ final class PdoEventStoreReadModelProjector implements ReadModelProjector
         $this->triggerPcntlSignalDispatch = $triggerPcntlSignalDispatch;
         $this->updateLockThreshold = $updateLockThreshold;
         $this->gapDetection = $gapDetection;
-        $this->vendor = $this->connection->getNativeConnection()->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $this->vendor = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         while ($eventStore instanceof EventStoreDecorator) {
             $eventStore = $eventStore->getInnerEventStore();
         }
@@ -344,7 +344,7 @@ UPDATE $projectionsTable SET position = ?, state = ?, status = ?
 WHERE name = ?
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([
                 Json::encode($this->streamPositions),
@@ -370,7 +370,7 @@ EOT;
         $stopProjectionSql = <<<EOT
 UPDATE $projectionsTable SET status = ? WHERE name = ?;
 EOT;
-        $statement = $this->connection->getNativeConnection()->prepare($stopProjectionSql);
+        $statement = $this->connection->prepare($stopProjectionSql);
         try {
             $statement->execute([ProjectionStatus::IDLE()->getValue(), $this->name]);
         } catch (PDOException $exception) {
@@ -405,7 +405,7 @@ EOT;
         $deleteProjectionSql = <<<EOT
 DELETE FROM $projectionsTable WHERE name = ?;
 EOT;
-        $statement = $this->connection->getNativeConnection()->prepare($deleteProjectionSql);
+        $statement = $this->connection->prepare($deleteProjectionSql);
         try {
             $statement->execute([$this->name]);
         } catch (PDOException $exception) {
@@ -561,7 +561,7 @@ EOT;
         $sql = <<<EOT
 SELECT status FROM $projectionsTable WHERE name = ? LIMIT 1;
 EOT;
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([$this->name]);
         } catch (PDOException $exception) {
@@ -729,7 +729,7 @@ EOT;
 SELECT position, state FROM $projectionsTable WHERE name = ? ORDER BY no DESC LIMIT 1;
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([$this->name]);
         } catch (PDOException $exception) {
@@ -756,7 +756,7 @@ EOT;
         $sql = <<<EOT
 SELECT 1 FROM $projectionsTable WHERE name = ?;
 EOT;
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([$this->name]);
         } catch (PDOException $exception) {
@@ -778,7 +778,7 @@ INSERT INTO $projectionsTable (name, position, state, status, locked_until)
 VALUES (?, '{}', '{}', ?, NULL);
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([$this->name, $this->status->getValue()]);
         } catch (PDOException $exception) {
@@ -805,7 +805,7 @@ EOT;
 UPDATE $projectionsTable SET locked_until = ?, status = ? WHERE name = ? AND (locked_until IS NULL OR locked_until < ?);
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([$lockUntilString, ProjectionStatus::RUNNING()->getValue(), $this->name, $nowString]);
         } catch (PDOException $exception) {
@@ -844,7 +844,7 @@ EOT;
 UPDATE $projectionsTable SET locked_until = ? WHERE name = ?;
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute(
                 [
@@ -879,7 +879,7 @@ EOT;
 UPDATE $projectionsTable SET locked_until = NULL, status = ? WHERE name = ?;
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([ProjectionStatus::IDLE()->getValue(), $this->name]);
         } catch (PDOException $exception) {
@@ -907,7 +907,7 @@ UPDATE $projectionsTable SET position = ?, state = ?, locked_until = ?
 WHERE name = ?
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([
                 Json::encode($this->streamPositions),
@@ -933,7 +933,7 @@ EOT;
             $sql = <<<EOT
 SELECT real_stream_name FROM $eventStreamsTable WHERE real_stream_name NOT LIKE '$%';
 EOT;
-            $statement = $this->connection->getNativeConnection()->prepare($sql);
+            $statement = $this->connection->prepare($sql);
             try {
                 $statement->execute();
             } catch (PDOException $exception) {
@@ -960,7 +960,7 @@ EOT;
             $sql = <<<EOT
 SELECT real_stream_name FROM $eventStreamsTable WHERE category IN ($rowPlaces);
 EOT;
-            $statement = $this->connection->getNativeConnection()->prepare($sql);
+            $statement = $this->connection->prepare($sql);
 
             try {
                 $statement->execute($this->query['categories']);
@@ -1044,7 +1044,7 @@ EOT;
         $startProjectionSql = <<<EOT
 UPDATE $projectionsTable SET status = ?, locked_until = ? WHERE name = ?;
 EOT;
-        $statement = $this->connection->getNativeConnection()->prepare($startProjectionSql);
+        $statement = $this->connection->prepare($startProjectionSql);
         try {
             $statement->execute([
                 $newStatus->getValue(),
