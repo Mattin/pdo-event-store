@@ -40,7 +40,7 @@ final class PostgresProjectionManager implements ProjectionManager
     private $eventStore;
 
     /**
-     * @var Connection
+     * @var PDO
      */
     private $connection;
 
@@ -56,7 +56,7 @@ final class PostgresProjectionManager implements ProjectionManager
 
     public function __construct(
         EventStore $eventStore,
-        Connection $connection,
+        PDO $connection,
         string $eventStreamsTable = 'event_streams',
         string $projectionsTable = 'projections'
     ) {
@@ -137,7 +137,7 @@ EOT;
             $status = ProjectionStatus::DELETING()->getValue();
         }
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([
                 $status,
@@ -162,7 +162,7 @@ EOT;
 UPDATE {$this->quoteIdent($this->projectionsTable)} SET status = ? WHERE name = ?;
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([
                 ProjectionStatus::RESETTING()->getValue(),
@@ -187,7 +187,7 @@ EOT;
 UPDATE {$this->quoteIdent($this->projectionsTable)} SET status = ? WHERE name = ?;
 EOT;
 
-        $statement = $this->connection->getNativeConnection()->prepare($sql);
+        $statement = $this->connection->prepare($sql);
         try {
             $statement->execute([
                 ProjectionStatus::STOPPING()->getValue(),
@@ -236,7 +236,7 @@ ORDER BY name ASC
 LIMIT $limit OFFSET $offset
 SQL;
 
-        $statement = $this->connection->getNativeConnection()->prepare($query);
+        $statement = $this->connection->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute($values);
@@ -288,7 +288,7 @@ ORDER BY name ASC
 LIMIT $limit OFFSET $offset
 SQL;
 
-        $statement = $this->connection->getNativeConnection()->prepare($query);
+        $statement = $this->connection->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute($values);
@@ -326,7 +326,7 @@ WHERE name = ?
 LIMIT 1
 SQL;
 
-        $statement = $this->connection->getNativeConnection()->prepare($query);
+        $statement = $this->connection->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute([$name]);
@@ -355,7 +355,7 @@ WHERE name = ?
 LIMIT 1
 SQL;
 
-        $statement = $this->connection->getNativeConnection()->prepare($query);
+        $statement = $this->connection->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute([$name]);
@@ -384,7 +384,7 @@ WHERE name = ?
 LIMIT 1
 SQL;
 
-        $statement = $this->connection->getNativeConnection()->prepare($query);
+        $statement = $this->connection->prepare($query);
         $statement->setFetchMode(PDO::FETCH_OBJ);
         try {
             $statement->execute([$name]);
