@@ -87,7 +87,7 @@ final class PostgresEventStore implements PdoEventStore, TransactionalEventStore
         int $loadBatchSize = 10000,
         string $eventStreamsTable = 'event_streams',
         bool $disableTransactionHandling = false,
-        WriteLockStrategy $writeLockStrategy = null
+        ?WriteLockStrategy $writeLockStrategy = null
     ) {
         if (! \extension_loaded('pdo_pgsql')) {
             throw ExtensionNotLoaded::with('pdo_pgsql');
@@ -261,8 +261,8 @@ EOT;
     public function load(
         StreamName $streamName,
         int $fromNumber = 1,
-        int $count = null,
-        MetadataMatcher $metadataMatcher = null
+        ?int $count = null,
+        ?MetadataMatcher $metadataMatcher = null
     ): Iterator {
         $tableName = $this->persistenceStrategy->generateTableName($streamName);
 
@@ -338,9 +338,9 @@ EOT;
 
     public function loadReverse(
         StreamName $streamName,
-        int $fromNumber = null,
-        int $count = null,
-        MetadataMatcher $metadataMatcher = null
+        ?int $fromNumber = null,
+        ?int $count = null,
+        ?MetadataMatcher $metadataMatcher = null
     ): Iterator {
         if (null === $fromNumber) {
             $fromNumber = PHP_INT_MAX;
