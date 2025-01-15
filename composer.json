@@ -15,10 +15,16 @@
     ],
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "repositories": [
+        {
+        "type": "vcs",
+        "url": "https://github.com/Mattin/event-store.git"
+        }
+    ],
     "require": {
         "php": "^8.0",
         "ext-pdo": "*",
-        "prooph/event-store": "^7.5.3"
+        "prooph/event-store": "dev-hotfix/php8.4-support"
     },
     "require-dev": {
         "sandrokeil/interop-config": "^2.0.1",
